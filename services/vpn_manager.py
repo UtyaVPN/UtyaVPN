@@ -810,7 +810,7 @@ async def handle_add_user(identifier, xray_client):
             gb_server_names,
             443,
             gb_short_id,
-            identifier + "-GL",
+            "УтяVPN - Глобальный",
         )
         client_name = re.sub(r"[^a-zA-Z0-9_.-]", "_", identifier)
         dir_path = os.path.join(config.CLIENT_BASE_DIR, client_name)

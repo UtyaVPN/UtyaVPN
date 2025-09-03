@@ -109,7 +109,8 @@ async def check_requests_callback(call: types.CallbackQuery, db_connection: aios
         for user in pending_requests:
             user_id, username, status, _, _, _, _, _ = user  # Unpack all fields
             response_text += AdminMessages.USER_ID.format(user_id=user_id) + "\n"
-            response_text += AdminMessages.USERNAME.format(username=username) + "\n"
+            if username:
+            response_text += AdminMessages.USERNAME.format(username=f"@{username}") + "\n"
             response_text += AdminMessages.STATUS.format(status=status) + "\n"
 
             markup = types.InlineKeyboardMarkup(
@@ -339,14 +340,14 @@ async def renew_configs_handler(message: types.Message, state: FSMContext, db_co
                     markup=markup,
                 )
             else:
-                failed_users.append(f"@{username} (ID: {user_id})")
+                failed_users.append(f"{'@' + username if username else user_id}")
 
         except TelegramAPIError as e:
             logger.error(
-                f"Ошибка при обновлении конфигураций для пользователя {user_id} (@{username}): {e}",
+                                    f"Ошибка при обновлении конфигураций для пользователя {user_id} ({'@' + username if username else ''}): {e}",
                 exc_info=True,
             )
-            failed_users.append(f"@{username} (ID: {user_id})")
+            failed_users.append(f"{'@' + username if username else user_id}")
 
     if failed_users:
         await bot.send_message(

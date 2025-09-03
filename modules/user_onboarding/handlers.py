@@ -28,7 +28,6 @@ user_onboarding_router = Router()
 @user_onboarding_router.callback_query(lambda call: call.data == "get_trial")
 async def get_trial_callback(call: types.CallbackQuery, state: FSMContext, db_connection: aiosqlite.Connection) -> None: 
     user_id = call.from_user.id
-    username = call.from_user.username
 
     user = await get_user_by_id(db_connection, user_id)
 

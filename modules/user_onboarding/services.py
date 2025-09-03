@@ -21,7 +21,7 @@ enter_caption = OnboardingMessages.ENTER_CAPTION
 async def process_start_command(message: types.Message = None, user_id: int = None, state: FSMContext = None, issticker = None, db_connection: aiosqlite.Connection = None):
     """Processes the start command and displays the appropriate menu."""
     user_id = message.from_user.id if message else user_id
-    username = message.from_user.username if message else None
+    username = f"@{message.from_user.username}" if message and message.from_user.username else f"user_id:{message.from_user.id}"
     user = await get_user_by_id(db_connection, user_id)
 
     if not user:
