@@ -261,7 +261,7 @@ async def confirm_action_callback(call: types.CallbackQuery, state: FSMContext):
     admin_message = CommonMessages.ADMIN_REQUEST_NOTIFICATION.format(
         sites_list="\n".join(formatted_sites),
         user_id=call.from_user.id,
-        username=call.from_user.username,
+        username=f"@{call.from_user.username}" if call.from_user.username else f"user_id:{call.from_user.id}",
     )
     await bot.send_message(ADMIN_ID, admin_message)
 
@@ -728,7 +728,7 @@ async def successful_payment_handler(
     await bot.send_message(
         ADMIN_ID,
         CommonMessages.ADMIN_PAYMENT_NOTIFICATION.format(
-            username=message.from_user.username,
+            username=f"@{message.from_user.username}" if message.from_user.username else f"user_id:{message.from_user.id}",
             user_id=user_id,
             total_amount=total_amount,
             subscription_days=subscription_days,
