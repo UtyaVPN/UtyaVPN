@@ -11,6 +11,7 @@ from xtlsapi import XrayClient, utils
 from contextlib import asynccontextmanager
 import aiofiles
 from collections import defaultdict
+from dotenv import load_dotenv
 
 
 class Config:
@@ -44,6 +45,7 @@ class Config:
         Args:
             setup_file_path (str): The absolute path to the setup file.
         """
+        load_dotenv()
         self.config: dict[str, str] = {}
         self.load_config(setup_file_path)
 
@@ -89,6 +91,11 @@ class Config:
         """
         Retrieves a configuration value by its key.
 
+        The precedence is:
+        1. Value from the setup file (`self.config`).
+        2. Value from environment variables (including .env file).
+        3. The default value provided.
+
         Args:
             key: The configuration key to retrieve.
             default: The default value to return if the key is not found.
@@ -96,7 +103,7 @@ class Config:
         Returns:
             The configuration value, or the default if not found.
         """
-        return self.config.get(key, default)
+        return self.config.get(key, os.getenv(key, default))
 
 
 
