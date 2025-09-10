@@ -1,10 +1,15 @@
 from aiogram.fsm.state import State, StatesGroup
 
-# Класс для хранения состояний пользователей в FSM (Finite State Machine)
+# Class for storing user states in FSM (Finite State Machine)
 
 
 class Form(StatesGroup):
-    """Класс состояний для обработки пользовательских взаимодействий в боте."""
+    """
+    A class for managing user states in the bot using a Finite State Machine (FSM).
+
+    This class defines the different states a user can be in while interacting
+    with the bot, such as waiting for input or confirmation.
+    """
 
     waiting_for_site_names = State()
     waiting_for_promo_code = State()
@@ -12,12 +17,12 @@ class Form(StatesGroup):
     waiting_for_promo_code_to_deactivate = State()
     waiting_for_promo_code_to_delete = State()
 
-    # Состояние, когда бот ожидает сообщение для рассылки
+    # State when the bot is waiting for a broadcast message
     waiting_for_broadcast_message = State()
 
-    # Состояние, когда бот ожидает идентификатор пользователя
+    # State when the bot is waiting for a user ID
     waiting_for_user_id = State()
 
-    # Состояние, когда бот ожидает количество дней
+    # State when the bot is waiting for a number of days
     waiting_for_n_days = State()
     waiting_for_site_confirmation = State()

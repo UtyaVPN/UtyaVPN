@@ -1,46 +1,59 @@
+"""
+Configuration settings for the UtyaVPN bot.
+
+This module loads environment variables and sets up essential configuration
+parameters for the bot's operation, including API tokens, administrator IDs,
+database paths, and various URLs.
+"""
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-TOKEN = os.getenv("TOKEN")
-ADMIN_ID = os.getenv("ADMIN_ID")
-SUPPORT_ID = os.getenv("SUPPORT_ID")
-DATABASE_PATH = os.getenv("DATABASE_PATH", "users.db")
+# Telegram Bot API Token
+TOKEN: str = os.getenv("TOKEN")
 
+# Telegram User ID for the bot administrator
+ADMIN_ID: int = int(os.getenv("ADMIN_ID")) if os.getenv("ADMIN_ID") else None
+
+# Telegram User ID for support contact
+SUPPORT_ID: int = int(os.getenv("SUPPORT_ID")) if os.getenv("SUPPORT_ID") else None
+
+# Path to the SQLite database file
+DATABASE_PATH: str = os.getenv("DATABASE_PATH", "users.db")
+
+# Telegram Channel ID for trial period subscription check
+TRIAL_CHANNEL_ID: int = int(os.getenv("TRIAL_CHANNEL_ID")) if os.getenv("TRIAL_CHANNEL_ID") else None
+
+# URL of the public Telegram channel for users to subscribe to
+PUBLIC_CHANNEL_URL: str = os.getenv("PUBLIC_CHANNEL_URL")
+
+# Base path where VPN configuration files are stored
+VPN_CONFIG_PATH: str = os.getenv("VPN_CONFIG_PATH", "/root/vpn")
+
+# URLs for VPN instruction pages (OpenVPN and WireGuard)
+OPENVPN_INSTRUCTION_URL: str = os.getenv("OPENVPN_INSTRUCTION_URL", "")
+WIREGUARD_INSTRUCTION_URL: str = os.getenv("WIREGUARD_INSTRUCTION_URL", "")
+
+# Timezone for scheduling tasks (e.g., 'Europe/Moscow')
+TIMEZONE: str = os.getenv("TIMEZONE", "Europe/Moscow")
+
+# --- Validation --- #
 if not TOKEN:
     raise ValueError("TOKEN environment variable is not set or is empty.")
 if not ADMIN_ID:
     raise ValueError("ADMIN_ID environment variable is not set or is empty.")
 if not SUPPORT_ID:
     raise ValueError("SUPPORT_ID environment variable is not set or is empty.")
-
-try:
-    ADMIN_ID = int(ADMIN_ID)
-except ValueError:
-    raise ValueError("ADMIN_ID environment variable must be an integer.")
-
-try:
-    SUPPORT_ID = int(SUPPORT_ID)
-except ValueError:
-    raise ValueError("SUPPORT_ID environment variable must be an integer.")
-
-TRIAL_CHANNEL_ID = os.getenv("TRIAL_CHANNEL_ID")
 if not TRIAL_CHANNEL_ID:
     raise ValueError("TRIAL_CHANNEL_ID environment variable is not set or is empty.")
-
-try:
-    TRIAL_CHANNEL_ID = int(TRIAL_CHANNEL_ID)
-except ValueError:
-    raise ValueError("TRIAL_CHANNEL_ID environment variable must be an integer.")
-
-PUBLIC_CHANNEL_URL = os.getenv("PUBLIC_CHANNEL_URL")
 if not PUBLIC_CHANNEL_URL:
     raise ValueError("PUBLIC_CHANNEL_URL environment variable is not set or is empty.")
 
-VPN_CONFIG_PATH = os.getenv("VPN_CONFIG_PATH", "/root/vpn")
-
-OPENVPN_INSTRUCTION_URL = os.getenv("OPENVPN_INSTRUCTION_URL", "")
-WIREGUARD_INSTRUCTION_URL = os.getenv("WIREGUARD_INSTRUCTION_URL", "")
-
-TIMEZONE = os.getenv("TIMEZONE", "Europe/Moscow")
+try:
+    # Ensure ADMIN_ID, SUPPORT_ID, and TRIAL_CHANNEL_ID are integers
+    int(ADMIN_ID)
+    int(SUPPORT_ID)
+    int(TRIAL_CHANNEL_ID)
+except ValueError as e:
+    raise ValueError(f"Environment variable type error: {e}. Ensure ADMIN_ID, SUPPORT_ID, and TRIAL_CHANNEL_ID are integers.")

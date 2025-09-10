@@ -4,8 +4,17 @@ from config.settings import DATABASE_PATH
 
 logger = logging.getLogger(__name__)
 
+
 async def create_db_connection() -> aiosqlite.Connection:
-    """Creates and returns a database connection with WAL mode enabled."""
+    """
+    Creates and returns a database connection with WAL mode enabled.
+
+    Returns:
+        An aiosqlite.Connection object.
+
+    Raises:
+        aiosqlite.Error: If the database connection fails.
+    """
     try:
         db = await aiosqlite.connect(DATABASE_PATH, timeout=10)
         await db.execute("PRAGMA journal_mode=WAL;")
@@ -16,8 +25,15 @@ async def create_db_connection() -> aiosqlite.Connection:
         logger.error("Error creating database connection:", exc_info=True)
         raise
 
+
 async def init_conn_db() -> None:
-    """Создает таблицы в базе данных, если они не существуют, и включает режим WAL."""
+    """
+    Initializes the database by creating necessary tables if they do not exist.
+
+    This function ensures that the 'users', 'promo_codes', and 'user_promo_codes'
+    tables are present in the database. It also enables WAL mode for better
+    concurrency and performance.
+    """
     try:
         async with aiosqlite.connect(DATABASE_PATH, timeout=10) as db:
             await db.execute("PRAGMA journal_mode=WAL;")
@@ -38,10 +54,11 @@ async def init_conn_db() -> None:
                 )
                 """
             )
+
             cursor = await db.execute("PRAGMA table_info(users)")
             columns = [column[1] for column in await cursor.fetchall()]
-            if 'has_used_trial' not in columns:
-                await db.execute('ALTER TABLE users ADD COLUMN has_used_trial INTEGER DEFAULT 0')
+            if "has_used_trial" not in columns:
+                await db.execute("ALTER TABLE users ADD COLUMN has_used_trial INTEGER DEFAULT 0")
                 logger.info("Added 'has_used_trial' column to 'users' table.")
 
             await db.execute(

@@ -1,0 +1,117 @@
+{
+    "dns": {
+        "servers": [
+            "{dns_server}"
+        ]
+    },
+    "fakedns": [
+        {
+            "ipPool": "198.20.0.0/15",
+            "poolSize": 128
+        },
+        {
+            "ipPool": "fc00::/64",
+            "poolSize": 128
+        }
+    ],
+    "inbounds": [
+        {
+            "listen": "127.0.0.1",
+            "port": 10808,
+            "protocol": "socks",
+            "settings": {
+                "auth": "noauth",
+                "udp": true
+            },
+            "sniffing": {
+                "destOverride": [
+                    "http",
+                    "tls",
+                    "quic"
+                ],
+                "enabled": true,
+                "routeOnly": true
+            },
+            "tag": "in-vless"
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "vless",
+            "settings": {
+                "vnext": [
+                    {
+                        "address": "{server_host}",
+                        "port": {vless_port},
+                        "users": [
+                            {
+                                "id": "{user_id}",
+                                "encryption": "none",
+                                "flow": "xtls-rprx-vision"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "streamSettings": {
+                "network": "tcp",
+                "realitySettings": {
+                    "fingerprint": "chrome",
+                    "publicKey": "{public_key}",
+                    "serverName": "{server_names}",
+                    "shortId": "{short_id}"
+                },
+                "security": "reality",
+                "tcpSettings": {
+                    "header": {
+                        "type": "none",
+                        "request": {
+                            "headers": {}
+                        }
+                    }
+                }
+            },
+            "tag": "proxy"
+        },
+        {
+            "protocol": "freedom",
+            "tag": "direct"
+        },
+        {
+            "protocol": "blackhole",
+            "tag": "block"
+        }
+    ],
+    "routing": {
+        "domainStrategy": "IPOnDemand",
+        "rules": [
+            {
+                "ip": [
+                    "10.30.0.0/15",
+                    "{dns_server}"
+                ],
+                "outboundTag": "proxy",
+                "type": "field"
+            },
+            {
+                "ip": [],
+                "outboundTag": "proxy",
+                "type": "field"
+            },
+            {
+                "domain": [
+                    "geosite:private"
+                ],
+                "outboundTag": "direct",
+                "type": "field"
+            },
+            {
+                "ip": [
+                    "0.0.0.0/0"
+                ],
+                "outboundTag": "direct",
+                "type": "field"
+            }
+        ]
+    }
+}
